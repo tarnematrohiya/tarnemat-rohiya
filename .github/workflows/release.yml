@@ -1,0 +1,27 @@
+name: Build Windows release
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      # Windows 10 / 11 (Electron 33, 64-bit) -> latest.yml
+      - run: npx electron-builder --win nsis --x64 --publish never
+      # Windows 7 / 8 (Electron 22, 32 + 64-bit in one installer) -> win7.yml
+      - run: npx electron-builder --win nsis --ia32 --x64 --publish never --config build/legacy.js
+      - name: Publish the release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          V=$(node -p "require('./package.json').version")
+          sed "s/{V}/$V/g" build/release-notes.md > notes.md
+          ls dist dist-legacy
+          gh release create "v$V" dist/*.exe dist/*.blockmap dist/latest.yml dist-legacy/*.exe dist-legacy/*.blockmap dist-legacy/win7.yml --title "ترنيمات روحية $V" --notes-file notes.md

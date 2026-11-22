@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>ترنيمات روحية</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+:root{
+  --bg:#16171a;--panel:#1f2125;--card:#26292e;--line:#30343a;--txt:#f1f1f2;--mut:#9ea3aa;
+  --acc:#3b82f6;--acc2:#2563eb;--live:#e5484d;--ok:#30a46c;--warn:#f5a524;
+  --ui:"K Cairo",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--ui);font-size:15px;display:grid;grid-template-rows:auto 1fr auto;overflow:hidden}
+button,input,select{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer}
+
+/* ---------- top bar ---------- */
+.top{display:flex;align-items:center;gap:14px;padding:10px 18px;background:var(--panel);border-bottom:1px solid var(--line)}
+.brand{font-size:20px;font-weight:800;margin-left:10px;display:flex;align-items:center;gap:8px}
+.brand i{font-style:normal;font-size:22px}
+.group{display:flex;align-items:center;gap:8px}
+.lbl{color:var(--mut);font-size:13px}
+.seg{display:flex;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:3px}
+.seg button{border:0;background:transparent;padding:7px 16px;border-radius:9px;font-weight:700;color:var(--mut)}
+.seg button.on{background:var(--acc);color:#fff}
+.tog{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:7px 14px;font-weight:700}
+.tog .sw{width:34px;height:20px;border-radius:20px;background:#444;position:relative;transition:.2s}
+.tog .sw::after{content:"";position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s}
+.tog.on{border-color:var(--warn);color:var(--warn)}.tog.on .sw{background:var(--warn)}.tog.on .sw::after{right:16px}
+#followBtn.on{border-color:var(--ok);color:var(--ok)}#followBtn.on .sw{background:var(--ok)}
+.btn{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 16px;font-weight:700}
+.btn:hover{background:#2f3339}
+.btn.primary{background:var(--acc);border-color:var(--acc);color:#fff}.btn.primary:hover{background:var(--acc2)}
+.btn.danger.on{background:var(--live);border-color:var(--live);color:#fff}
+.spacer{flex:1}
+.hint{color:var(--mut);font-size:12px;max-width:260px;line-height:1.4}
+
+/* ---------- layout ---------- */
+main{display:grid;grid-template-columns:330px 1fr 440px;min-height:0}
+main > .col:last-child{overflow-y:auto}
+.top{flex-wrap:wrap;row-gap:8px}
+@media (max-width:1400px){main{grid-template-columns:280px 1fr 360px}.top{gap:8px;padding:8px 12px}.top .lbl{display:none}.seg button{padding:6px 10px}.tog{padding:6px 10px}.btn{padding:7px 11px}.brand{font-size:17px}}
+@media (max-width:1150px){main{grid-template-columns:270px 1fr 300px}.keys{font-size:11px}.tabs button{font-size:13px}.ctrl .btn{font-size:13px;padding:10px 4px}}
+.ctrl .btn{white-space:nowrap;overflow:hidden}
+@media (max-width:1450px){.ctrl .lg{display:none}}
+.colhead{flex-wrap:wrap}
+.col{display:flex;flex-direction:column;min-height:0;border-left:1px solid var(--line)}
+.col:last-child{border-left:0}
+.colhead{padding:14px 16px 8px;font-weight:800;font-size:16px;display:flex;align-items:center;gap:8px}
+.colhead small{color:var(--mut);font-weight:600;font-size:13px}
+
+/* library */
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:4px 16px 10px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:4px}
+.tabs button{white-space:nowrap;border:0;background:transparent;padding:8px 4px;border-radius:9px;font-weight:800;color:var(--mut);font-size:14px}
+.tabs button.on{background:var(--card);color:var(--txt);box-shadow:0 1px 0 #0006}
+.search{margin:0 16px 10px;position:relative}
+.search input{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 40px 12px 14px;font-size:16px;outline:none}
+.search input:focus{border-color:var(--acc)}
+.search span{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--mut)}
+.crumb{margin:0 16px 8px;display:flex;gap:6px;flex-wrap:wrap;font-size:13px}
+.crumb button{background:none;border:0;color:var(--acc);padding:0;font-weight:700}
+.crumb span{color:var(--mut)}
+.list{flex:1;overflow:auto;padding:0 10px 14px}
+.item{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:12px;cursor:pointer;border:1px solid transparent}
+.item:hover{background:var(--card)}.item.sel{background:var(--card);border-color:var(--acc)}.item.kb{background:var(--card);border-color:var(--acc);box-shadow:0 0 0 2px var(--acc) inset}
+.item .no{min-width:42px;height:30px;border-radius:8px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--mut);font-size:14px}
+.item .t{font-weight:700;line-height:1.5}.item .s{color:var(--mut);font-size:13px;line-height:1.5}
+.sec{color:var(--mut);font-size:13px;font-weight:800;padding:12px 10px 6px}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:0 6px}
+.grid button{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 0;font-weight:800}
+.grid button:hover{border-color:var(--acc)}
+.empty{color:var(--mut);text-align:center;padding:30px 16px;line-height:1.8}
+
+/* slides */
+.slides{flex:1;overflow:auto;padding:4px 16px 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));grid-auto-rows:max-content;gap:12px;align-content:start}
+.slide{border-radius:14px;padding:30px 14px 14px;font-size:15px;line-height:1.75;cursor:pointer;min-height:130px;text-align:center;position:relative;border:3px solid transparent;font-family:var(--f),sans-serif;font-weight:700;transition:transform .1s}
+.slide:hover{transform:translateY(-2px)}
+.slide .lab{position:absolute;top:7px;right:10px;font-size:12px;font-weight:800;padding:1px 8px;border-radius:6px;background:#0002;font-family:var(--ui)}
+.slide.end{min-height:70px;display:flex;align-items:center;justify-content:center;color:#666;font-family:var(--ui);font-size:13px}
+.endlab{color:#666;font-family:var(--ui);font-weight:600;font-size:14px}
+.slide.cue{border-color:var(--acc)}.slide.onair{border-color:var(--live)}
+.slide.onair::after{content:"على الشاشة";position:absolute;top:7px;left:10px;font-size:11px;background:var(--live);color:#fff;padding:1px 8px;border-radius:6px;font-family:var(--ui)}
+.th-w{background:#fff;color:#000}.th-b,.th-bible{background:#000;color:#fff}
+.slide.th-bible{font-weight:600;border-color:#2a2d33}.slide.th-bible.cue{border-color:var(--acc)}.slide.th-bible.onair{border-color:var(--live)}
+.slide .r,.screen .r{font-size:.75em;color:#9a9a9a;margin-top:6px}
+
+/* preview / live */
+.screens{padding:4px 16px 0;display:flex;flex-direction:column;gap:6px}
+.scrlabel{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:14px}
+.scrlabel .ref{color:var(--mut);font-weight:600;font-size:13px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--live);margin-left:6px;animation:p 1.6s infinite}
+@keyframes p{50%{opacity:.35}}
+.screen{aspect-ratio:16/9;border-radius:12px;border:3px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px 22px;font-size:17px;line-height:1.75;overflow:hidden;position:relative;background:#000;color:#fff;font-family:var(--f),sans-serif;font-weight:700}
+.screen.th-w{background:#fff;color:#000}
+.screen.th-w,.screen.th-b{line-height:2.05}.slide.th-w,.slide.th-b{line-height:2}
+.screen.cueS{border-color:var(--acc)}.screen.liveS{border-color:var(--live);border-width:4px}
+.screen.small{width:58%;align-self:center;font-size:11px;padding:8px 12px;opacity:.9}.scrlabel.small{width:58%;align-self:center;font-size:.9em;opacity:.85}
+.screen.th-bible{font-weight:600}
+.screen .vn,.slide .vn{position:absolute;top:8px;left:12px;color:#e00;font-weight:800;font-size:14px;font-family:var(--ui)}
+.slide .vn{display:none}
+#tourHole{position:fixed;z-index:900;border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,.62),0 0 0 3px var(--acc);pointer-events:none;transition:all .25s}
+#tourBox{position:fixed;z-index:901;width:380px;background:var(--panel);border:1px solid var(--acc);border-radius:16px;padding:16px 18px;box-shadow:0 18px 50px #000a;line-height:1.8}
+#tourBox .tt{font-weight:800;font-size:18px;margin-bottom:6px}
+#tourBox .td{font-size:15px;color:var(--txt)}#tourBox kbd{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:0 6px;font-family:var(--ui);font-size:13px}
+#tourBox .tb{display:flex;align-items:center;gap:6px;margin-top:12px;font-size:12px;color:var(--mut)}#tourBox .tb .sp{flex:1}#tourBox .btn{padding:6px 12px}
+/* church version without the microphone */
+body.lite #modeSeg,body.lite .top .group,body.lite #prayerBtn,body.lite #followBtn,body.lite #micBtn,body.lite #earState,body.lite .bar .cmd{display:none!important}
+.slides.list{display:flex;flex-direction:column;gap:3px}
+.slides.list .slide{flex-shrink:0;min-height:0;padding:7px 64px 7px 12px;text-align:right;font-size:15px;line-height:1.7;border-radius:8px;border-width:2px}
+.slides.list .slide .r{display:none}
+.slides.list .slide .lab{top:7px;right:8px;font-size:11px}
+.slides.list .slide.onair::after{top:50%;transform:translateY(-50%);left:8px}.slides.list .slide.onair{padding-left:92px}
+.screen:empty::before{content:attr(data-empty);color:#555;font-family:var(--ui);font-weight:600;font-size:14px}
+.ctrl{display:grid;grid-template-columns:1fr 2fr 1fr;gap:8px;padding:10px 16px 6px}
+.ctrl .btn{padding:12px 6px;font-size:15px}
+.go{background:var(--live)!important;border-color:var(--live)!important;color:#fff;font-size:17px!important}
+.go:hover{filter:brightness(1.1)}
+.keys{color:var(--mut);font-size:12px;text-align:center;padding:0 16px 8px}
+kbd{background:var(--card);border:1px solid var(--line);border-radius:5px;padding:0 6px;font-family:inherit}
+
+/* bottom mic bar */
+.bar{display:flex;align-items:center;gap:12px;padding:10px 18px;background:var(--panel);border-top:1px solid var(--line)}
+.mic{display:flex;align-items:center;gap:8px;font-weight:800;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:8px 14px}
+.cmd{flex:1;position:relative}
+.cmd input{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:15px;outline:none}
+.cmd input:focus{border-color:var(--acc)}
+.last{color:var(--mut);font-size:13px;min-width:280px;max-width:420px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.last b{color:var(--txt)}
+
+/* settings popover */
+.pop{position:absolute;top:58px;left:18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;width:300px;box-shadow:0 20px 40px #0008;display:none;z-index:9}
+.pop.open{display:block}
+.pop h4{margin:0 0 10px;font-size:15px}
+.pop label{display:block;color:var(--mut);font-size:13px;margin:12px 0 6px}
+.pop select{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px}
+.size{display:flex;align-items:center;gap:10px}.size b{flex:1;text-align:center;font-size:16px}
+.size button{width:44px}
+.fprev{margin-top:12px;background:#fff;color:#000;border-radius:10px;padding:12px;text-align:center;font-family:var(--f),sans-serif;font-weight:800;font-size:20px;line-height:1.6}
+
+/* toast */
+.toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%) translateY(20px);background:#000d;border:1px solid var(--line);padding:10px 18px;border-radius:12px;font-weight:700;opacity:0;transition:.25s;pointer-events:none;z-index:20}
+.toast.show{opacity:1;transform:translateX(-50%)}
+::-webkit-scrollbar{width:10px}::-webkit-scrollbar-thumb{background:#33363c;border-radius:10px;border:2px solid var(--bg)}
+
+/* native feel */
+body{user-select:none;-webkit-user-select:none;cursor:default}
+input,select{user-select:text;-webkit-user-select:text}
+.ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.btn,.seg button,.tabs button,.tog,.mic{display:inline-flex;align-items:center;gap:8px;justify-content:center}
+.top{-webkit-app-region:drag}
+.top button,.top select,.top .seg,.top .pop{-webkit-app-region:no-drag}
+.mac .top{padding-left:86px}
+.logo{width:30px;height:30px;border-radius:9px;background:linear-gradient(160deg,#3b82f6,#1e3a8a);display:inline-flex;align-items:center;justify-content:center;color:#fff}
+.logo .ic{width:16px;height:16px}
+.brand{font-size:17px;letter-spacing:.2px}
+.btn,.seg,.tog,.tabs,.search input,.cmd input,.mic{border-radius:10px}
+.search span{display:flex}
+.search span .ic{width:16px;height:16px}
+.go .ic{width:16px;height:16px}
+.mic .lvl{width:46px;height:6px;border-radius:6px;background:#0006;overflow:hidden;display:none}
+.mic .lvl i{display:block;height:100%;width:0;background:var(--ok);transition:width .08s}
+.mic.on{border-color:var(--ok);color:var(--ok)}.mic.on .lvl{display:block}
+.mic.loading{border-color:var(--warn);color:var(--warn)}
+.mic.err{border-color:var(--live);color:var(--live)}
+.item,.slide,.grid button{transition:background .12s,border-color .12s}
+.toast{border-radius:10px}
+.seg.testament{display:grid;grid-template-columns:1fr 1fr;margin:2px 6px 12px}
+.seg.testament button{padding:9px}
+.meethead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 16px 8px}
+.meethead b{font-size:14px}.meethead .btn{padding:6px 12px;font-size:13px}
+.item .when{color:var(--mut);font-size:12px;min-width:44px;text-align:left;margin-right:auto;align-self:center}
+.ear{font-size:12px;font-weight:800;padding:4px 10px;border-radius:20px;white-space:nowrap;border:1px solid var(--line);color:var(--mut)}
+.ear.listen{color:var(--ok);border-color:#30a46c55}.ear.think{color:var(--warn);border-color:var(--warn);animation:p 1s infinite}.ear.found{color:#fff;background:var(--ok);border-color:var(--ok)}
+.meethead .btn{white-space:nowrap}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+ <defs>
+  <symbol id="i-cross" viewBox="0 0 24 24"><path d="M10.6 1.5h2.8v5.6h5.4v2.8h-5.4v12.6h-2.8V9.9H5.2V7.1h5.4z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+  <symbol id="i-eyeoff" viewBox="0 0 24 24"><path d="M9.9 4.2A10 10 0 0 1 12 4c5 0 9 4.5 10 8a13 13 0 0 1-2.2 3.6M6.6 6.6C4.4 8 2.8 10.1 2 12c1 3.5 5 8 10 8a10 10 0 0 0 5.4-1.6"/><path d="m2 2 20 20"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></symbol>
+  <symbol id="i-type" viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></symbol>
+  <symbol id="i-pray" viewBox="0 0 24 24"><path d="M12 2c-1 2-3 5-3 8v4l-4 4v4h6l1-3 1 3h6v-4l-4-4v-4c0-3-2-6-3-8z"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5M8 22h8"/></symbol>
+  <symbol id="i-micoff" viewBox="0 0 24 24"><path d="m2 2 20 20"/><path d="M9 9v1a3 3 0 0 0 5.1 2.1M15 9.3V5a3 3 0 0 0-5.9-.7"/><path d="M19 10a7 7 0 0 1-1.2 3.9M5 10a7 7 0 0 0 11 5.7M12 17v5M8 22h8"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="currentColor"/></symbol>
+  <symbol id="i-next" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-prev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-4 0v5M14 10V4a2 2 0 0 0-4 0v6M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.9-6-2.4l-3.6-3.6a2 2 0 0 1 2.8-2.8L7 15"/></symbol>
+  <symbol id="i-today" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/></symbol>
+  <symbol id="i-auto" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
+ </defs>
+</svg>
+<div class="top">
+  <div class="brand"><span class="logo"><svg class="ic"><use href="#i-cross"/></svg></span><span>ترنيمات روحية</span></div>
+
+  <div class="group">
+    <span class="lbl">طريقة العرض:</span>
+    <div class="seg" id="modeSeg">
+      <button data-mode="assist" class="on" title="البرنامج يجهز الترنيمة أو الآية وانت تدوس اعرض"><svg class="ic"><use href="#i-hand"/></svg>يدوي</button>
+      <button data-mode="auto" title="البرنامج يعرض على الشاشة على طول"><svg class="ic"><use href="#i-auto"/></svg>أوتوماتيك</button>
+    </div>
+  </div>
+
+  <button class="tog" id="prayerBtn" title="وقت الصلاة: الآيات تتجهز بس وما تظهرش لوحدها، والترانيم تظهر عادي"><span class="sw"></span>وقت الصلاة</button>
+
+  <button class="tog on" id="followBtn" title="في الأوتوماتيك: لما ترنيمة أو آية تكون معروضة والميكروفون شغال، البرنامج يقلب لوحده مع الترنيم أو القراية"><span class="sw"></span>تقليب مع الترنيم</button>
+
+  <span class="spacer"></span>
+
+  <button class="btn" id="updBtn" style="display:none;background:var(--ok);border-color:var(--ok);color:#fff"></button>
+  <button class="btn" id="tourBtn" onclick="startTour()"><svg class="ic"><use href="#i-help"/></svg>طريقة الاستخدام</button>
+  <button class="btn" id="setBtn"><svg class="ic"><use href="#i-type"/></svg>الخط والحجم</button>
+  <button class="btn danger" id="blankBtn" title="إخفاء أي كلام من على الشاشة (B)"><svg class="ic"><use href="#i-eyeoff"/></svg>إخفاء الشاشة</button>
+  <button class="btn primary" id="openOut"><svg class="ic"><use href="#i-monitor"/></svg><span id="outLbl">فتح شاشة العرض</span></button>
+
+  <div class="pop" id="pop">
+    <h4>شكل الكلام على الشاشة</h4>
+    <label>الخط</label>
+    <select id="fontSel">
+      <option value="K Cairo">القاهرة — الأوضح (مُستحسن)</option>
+      <option value="K Almarai">المراعي — عريض وواضح</option>
+      <option value="K Naskh">نسخ — تقليدي</option>
+      <option value="K Amiri">أميري — كلاسيكي</option>
+      <option value="K Scheherazade">شهرزاد — كبير</option>
+      <option value="K Plex">بلكس — حديث</option>
+      <option value="K Kufi">كوفي</option>
+    </select>
+    <label>حجم الكلام</label>
+    <div class="size"><button class="btn" id="szDn">−</button><b id="szVal">100%</b><button class="btn" id="szUp">+</button></div>
+    <button class="btn" id="fillBtn" style="margin-top:6px;width:100%">ملء الشاشة: شغال</button>
+    <label>الميكروفون</label>
+    <select id="micSel"><option value="">الميكروفون الافتراضي</option></select>
+    <div class="fprev">اِسْمُ يَسُوعَ قَدْ سَمَا</div>
+  </div>
+</div>
+
+<main>
+  <!-- library -->
+  <section class="col">
+    <div class="tabs">
+      <button data-tab="hymns" class="on"><svg class="ic"><use href="#i-music"/></svg>الترانيم</button>
+      <button data-tab="bible"><svg class="ic"><use href="#i-book"/></svg>الكتاب المقدس</button>
+      <button data-tab="today"><svg class="ic"><use href="#i-today"/></svg>اجتماع اليوم</button>
+      <button data-tab="history"><svg class="ic"><use href="#i-history"/></svg>السجل</button>
+    </div>
+    <div class="search"><span><svg class="ic"><use href="#i-search"/></svg></span><input id="q" type="text" autocomplete="off"></div>
+    <div class="crumb" id="crumb"></div>
+    <div class="list" id="results"></div>
+  </section>
+
+  <!-- current item -->
+  <section class="col">
+    <div class="colhead" id="curTitle">اختار ترنيمة أو آية من القائمة</div>
+    <div class="slides" id="slides"></div>
+  </section>
+
+  <!-- preview / live -->
+  <section class="col">
+    <div class="screens">
+      <div class="scrlabel"><span><span class="dot"></span>على الشاشة الآن</span><span class="ref" id="liveRef"></span></div>
+      <div class="screen liveS" id="liveScr" data-empty="الشاشة فاضية"></div>
+      <div class="scrlabel small" style="margin-top:8px"><span>التالي</span><span class="ref" id="cueRef"></span></div>
+      <div class="screen cueS small" id="cueScr" data-empty="مفيش حاجة متجهزة"></div>
+    </div>
+    <div class="ctrl">
+      <button class="btn" id="prevBtn"><svg class="ic"><use href="#i-prev"/></svg>السابق</button>
+      <button class="btn go" id="playBtn"><svg class="ic"><use href="#i-play"/></svg>اعرض<span class="lg"> على الشاشة</span></button>
+      <button class="btn" id="nextBtn">التالي<svg class="ic"><use href="#i-next"/></svg></button>
+    </div>
+    <div class="keys"><kbd>مسافة</kbd> اعرض · <kbd>←</kbd><kbd>→</kbd> قلّب · <kbd>B</kbd> إخفاء · <span style="white-space:nowrap"><kbd>182</kbd> <kbd>مسافة</kbd> <kbd>2</kbd> <kbd>Enter</kbd> ترنيمة وعدد</span> · <kbd>Esc</kbd> ترنيمة جديدة</div>
+  </section>
+</main>
+
+<div class="bar">
+  <button class="mic" id="micBtn"><svg class="ic"><use href="#i-micoff"/></svg><span id="micLbl">تشغيل الميكروفون</span><span class="lvl"><i id="lvl"></i></span></button>
+  <div class="cmd"><input id="cmd" type="text" placeholder='اكتب طلب أو قوله في الميكروفون، مثلاً: "ترنيمة 184 العدد التاني" أو "رومية الإصحاح الأول العدد 12"'></div>
+  <span class="ear listen" id="earState">سامع</span>
+  <div class="last" id="last">آخر حاجة: <b>—</b></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="data/hymns.js"></script>
+<script src="data/bible.js"></script>
+<script src="books.js"></script>
+<script src="engine.js"></script>
+<script src="mic.js"></script>
+<script src="tour.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

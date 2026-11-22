@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html dir="rtl"><head><meta charset="utf-8"><title>شاشة العرض</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+html,body{margin:0;height:100%;background:#000;color:#fff;overflow:hidden;cursor:none;user-select:none}
+body.th-w{background:#fff}
+#t{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8vh 9vw;font-family:var(--f),sans-serif;font-size:calc(var(--s,1) * 6.5vh);font-weight:600;line-height:1.8}
+#t.th-w,#t.th-b{font-size:calc(var(--s,1) * 8vh);font-weight:800;line-height:2.05}
+#t.th-w{background:#fff;color:#000}#t.th-b{background:#000;color:#fff}
+.vn{position:absolute;top:2.5vh;left:4vw;color:#e00;font-weight:800;font-size:.55em}
+.r{font-size:.5em;color:#999;margin-top:1.2em}
+</style></head>
+<body><div id="t"></div>
+<script>
+const t = document.getElementById('t');
+function paint(s) {
+  t.className = ''; document.body.className = '';
+  if (!s || s.end) { t.innerHTML = ''; return; }
+  t.classList.add('th-' + s.theme); document.body.className = 'th-' + s.theme;
+  t.innerHTML = (s.num ? `<span class="vn">${s.num}</span>` : '') + `<div class="tx">${s.html}</div>`;
+}
+// long verses: shrink the text until it fits the screen
+// fill: grow the text until it fills the screen (size setting = how much of the screen); otherwise only shrink
+let FILL = true, SCALE = 1;
+const over = () => t.scrollHeight > t.clientHeight + 2 || t.scrollWidth > t.clientWidth + 2;
+function fit() {
+  t.style.fontSize = '';
+  if (!t.textContent.trim()) return;
+  const base = parseFloat(getComputedStyle(t).fontSize);
+  if (!FILL) { let k = 1; while (k > 0.45 && over()) { k -= 0.05; t.style.fontSize = (base * k) + 'px'; } return; }
+  let lo = 0.3, hi = 3;                                  // biggest size that still fits
+  for (let i = 0; i < 14; i++) { const m = (lo + hi) / 2; t.style.fontSize = (base * m) + 'px'; if (over()) hi = m; else lo = m; }
+  const k = Math.min(lo * 0.9, 1.4) * Math.min(1, SCALE);   // fill, but keep a margin and never more than 1.4x the normal size
+  t.style.fontSize = (base * k) + 'px';
+}
+window.addEventListener('resize', fit);
+let timer;
+window.bp.on('slide', s => { paint(s); fit(); });     // straight cut, no fade
+window.bp.on('style', st => { FILL = st.fill !== false; SCALE = st.scale || 1; document.documentElement.style.setProperty('--f', `"${st.font}"`); document.documentElement.style.setProperty('--s', st.scale); setTimeout(fit, 50); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { window.bp.toggleOutputFullscreen(); return; }
+  window.bp.key({ key: e.key, code: e.code });
+  if (e.code === 'Space') e.preventDefault();
+});
+document.addEventListener('dblclick', () => window.bp.toggleOutputFullscreen());
+</script></body></html>

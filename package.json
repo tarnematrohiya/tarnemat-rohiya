@@ -1,0 +1,45 @@
+{
+  "name": "tarnemat-rohiya",
+  "productName": "Tarnemat Rohiya",
+  "version": "1.0.0",
+  "description": "ترنيمات روحية - برنامج مجاني لعرض الترانيم الروحية والكتاب المقدس في الكنيسة",
+  "main": "main.js",
+  "author": "Ovia Media Production",
+  "license": "UNLICENSED",
+  "scripts": { "start": "electron ." },
+  "devDependencies": {
+    "electron": "^33.4.11",
+    "electron-builder": "^25.1.8",
+    "resedit": "^2.0.3"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.11"
+  },
+  "build": {
+    "appId": "org.ovia.tarnemat.rohiya",
+    "productName": "Tarnemat Rohiya",
+    "copyright": "Ovia Media Production",
+    "directories": { "output": "dist" },
+    "files": ["main.js", "preload.js", "edition.json", "renderer/**", "build/icon.png", "package.json"],
+    "compression": "normal",
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "icon": "build/icon.ico",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "ترنيمات روحية",
+      "artifactName": "Tarnemat-Rohiya-Setup-${version}.${ext}",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "runAfterFinish": true,
+      "uninstallDisplayName": "ترنيمات روحية"
+    },
+    "afterPack": "build/afterPack.js",
+    "publish": [{ "provider": "github", "owner": "tarnematrohiya", "repo": "tarnemat-rohiya", "releaseType": "release" }]
+  }
+}
