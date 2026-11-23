@@ -74,14 +74,14 @@ main > .col:last-child{overflow-y:auto}
 .empty{color:var(--mut);text-align:center;padding:30px 16px;line-height:1.8}
 
 /* slides */
-.slides{flex:1;overflow:auto;padding:4px 16px 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));grid-auto-rows:max-content;gap:12px;align-content:start}
-.slide{border-radius:14px;padding:30px 14px 14px;font-size:15px;line-height:1.75;cursor:pointer;min-height:130px;text-align:center;position:relative;border:3px solid transparent;font-family:var(--f),sans-serif;font-weight:700;transition:transform .1s}
+.slides{--sf:1;flex:1;overflow:auto;padding:4px 16px 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));grid-auto-rows:max-content;gap:12px;align-content:start}
+.slide{border-radius:calc(14px*var(--sf));padding:calc(40px*var(--sf)) calc(14px*var(--sf)) calc(14px*var(--sf));font-size:calc(15px*var(--sf));line-height:1.75;cursor:pointer;min-height:calc(130px*var(--sf));text-align:center;position:relative;border:3px solid transparent;font-family:var(--f),sans-serif;font-weight:700;transition:transform .1s}
 .slide:hover{transform:translateY(-2px)}
-.slide .lab{position:absolute;top:7px;right:10px;font-size:12px;font-weight:800;padding:1px 8px;border-radius:6px;background:#0002;font-family:var(--ui)}
-.slide.end{min-height:70px;display:flex;align-items:center;justify-content:center;color:#666;font-family:var(--ui);font-size:13px}
+.slide .lab{position:absolute;top:calc(6px*var(--sf));right:calc(9px*var(--sf));font-size:calc(12px*var(--sf));font-weight:800;padding:1px 8px;border-radius:6px;background:#0002;font-family:var(--ui)}
+.slide.end{min-height:calc(70px*var(--sf));display:flex;align-items:center;justify-content:center;color:#666;font-family:var(--ui);font-size:13px}
 .endlab{color:#666;font-family:var(--ui);font-weight:600;font-size:14px}
 .slide.cue{border-color:var(--acc)}.slide.onair{border-color:var(--live)}
-.slide.onair::after{content:"على الشاشة";position:absolute;top:7px;left:10px;font-size:11px;background:var(--live);color:#fff;padding:1px 8px;border-radius:6px;font-family:var(--ui)}
+.slide.onair::after{content:"على الشاشة";position:absolute;top:calc(7px*var(--sf));left:calc(10px*var(--sf));font-size:calc(11px*var(--sf));background:var(--live);color:#fff;padding:1px 8px;border-radius:6px;font-family:var(--ui)}
 .th-w{background:#fff;color:#000}.th-b,.th-bible{background:#000;color:#fff}
 .slide.th-bible{font-weight:600;border-color:#2a2d33}.slide.th-bible.cue{border-color:var(--acc)}.slide.th-bible.onair{border-color:var(--live)}
 .slide .r,.screen .r{font-size:.75em;color:#9a9a9a;margin-top:6px}

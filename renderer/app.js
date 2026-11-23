@@ -61,14 +61,30 @@ function renderSlides() {
   el.classList.toggle('list', !!(st.cur && st.cur.kind === 'bible'));   // verses = small lines one under the other
   st.slides.forEach((s, i) => {
     const d = document.createElement('div'); d.className = 'slide th-' + s.theme + (s.end ? ' end' : '');
-    d.innerHTML = `<span class="lab">${s.lab}</span>${s.html}`;
+    d.innerHTML = `<span class="lab">${s.lab}</span><div class="in">${s.html}</div>`;
     d.title = 'ضغطة = جهّزها (ولو الترنيمة معروضة تظهر على طول) · ضغطتين = اعرضها';
     d.onclick = () => pick(i);
     d.ondblclick = () => { setCue(i); play(); };
     el.appendChild(d);
   });
-  mark();
+  fitSlides(); mark();
 }
+// hymn slides: always 3 columns like the Mac; if they don't all fit, the whole grid shrinks evenly (no scrolling)
+function fitSlides() {
+  const el = $('slides');
+  el.style.gridTemplateColumns = ''; el.style.removeProperty('--sf');
+  if (el.classList.contains('list') || !el.children.length || !el.clientHeight) return;
+  el.style.gridTemplateColumns = 'repeat(3,minmax(0,1fr))';
+  let lo = 0.4, hi = 1;
+  el.style.setProperty('--sf', 1);
+  if (el.scrollHeight <= el.clientHeight + 1) return;
+  for (let k = 0; k < 9; k++) {
+    const m = (lo + hi) / 2; el.style.setProperty('--sf', m.toFixed(3));
+    if (el.scrollHeight <= el.clientHeight + 1) lo = m; else hi = m;
+  }
+  el.style.setProperty('--sf', lo.toFixed(3));
+}
+new ResizeObserver(() => fitSlides()).observe($('slides'));
 function setCue(i) {
   if (i < 0 || i >= st.slides.length) return;
   st.cue = i; paint($('cueScr'), st.slides[i]); $('cueRef').textContent = st.slides[i].ref; mark();
