@@ -14,7 +14,7 @@
     { el: '[data-tab=bible]', tab: 'bible', t: 'الكتاب المقدس', d: 'اكتب اختصار السفر والإصحاح والعدد ودوس <kbd>Enter</kbd>، أمثلة:<br><b><bdi>يو ٣ ١٦</bdi></b> = يوحنا ٣: ١٦<br><b><bdi>١كو ١٣ ٤</bdi></b> = كورنثوس الأولى ١٣: ٤<br><b><bdi>تك 1 1</bdi></b> = التكوين ١: ١ &nbsp;·&nbsp; <b><bdi>امثال8 1</bdi></b> = الأمثال ٨: ١' },
     { el: '#slides', tab: 'bible', t: 'آيات الإصحاح', d: 'بعد ما الآية تظهر، أي رقم + <kbd>Enter</kbd> = آية تانية في نفس الإصحاح.<br>أو انزل بالأسهم <kbd>↓</kbd> <kbd>↑</kbd> ودوس <kbd>Enter</kbd>.' },
     { el: '#setBtn', t: 'الخط والحجم', d: 'اختار خط مريح وكبّر أو صغّر الكلام على الشاشة.' },
-    { el: '#openOut', t: 'شاشة العرض', d: 'لو البروجكتور متوصل، دوس هنا تفتح شاشة العرض عليه.' },
+    { el: '#openOut', t: 'شاشة العرض', d: 'لما توصّل البروجكتور، شاشة العرض بتفتح عليه لوحدها. دوس هنا بس لو ماظهرتش.' },
     { el: '[data-tab=today]', tab: 'today', t: 'اجتماع اليوم والسجل', d: 'كل ترنيمة وآية اتعرضت النهارده بتتسجل هنا، والاجتماعات اللي فاتت في "السجل".' },
     { t: 'خلاص', d: 'الشرح ده موجود دايماً في زرار "طريقة الاستخدام" فوق.' }
   ];
@@ -52,5 +52,5 @@
   window.startTour = () => { if (box) close(); i = 0; build(); show(); };
   addEventListener('resize', () => { if (box) show(); });
   // the first time the app opens on a computer
-  addEventListener('load', () => { let seen = '1'; try { seen = localStorage.getItem('bp.tourSeen'); } catch (e) {} if (!seen) setTimeout(window.startTour, 900); });
+  addEventListener('load', () => { let seen = '1'; try { seen = localStorage.getItem('bp.tourSeen'); } catch (e) {} if (!seen) { try { localStorage.setItem('bp.tourSeen', '1'); } catch (e) {} setTimeout(window.startTour, 900); } });
 })();
