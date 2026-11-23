@@ -108,7 +108,7 @@ function play() {
   st.live = st.cue; st.liveKey = key(); st.liveSlide = s; st.blank = false; $('blankBtn').classList.remove('on');
   paint($('liveScr'), s); $('liveRef').textContent = s.ref;
   sendOut(s); mark(); record(s);
-  if (!outputReady()) toast('اتعرضت هنا بس — دوس "فتح شاشة العرض" عشان تطلع على البروجكتور');
+  if (!outputReady()) toast('اتعرضت هنا بس — وصّل البروجكتور واعمل Extend (ويندوز + P) وشاشة العرض هتفتح عليه لوحدها');
   if (st.cue + 1 < st.slides.length) setCue(st.cue + 1);
 }
 function blank() {
@@ -152,7 +152,9 @@ if (APP) {
   document.documentElement.classList.toggle('mac', window.bp.platform === 'darwin');
   window.bp.on('status', s => {
     outOpen = s.outputOpen;
-    $('outLbl').textContent = s.outputOpen ? (s.projector ? 'شغالة على البروجكتور' : 'شاشة العرض مفتوحة') : (s.projector ? 'فتح شاشة العرض' : 'فتح شاشة العرض (مفيش بروجكتور)');
+    // the projector screen opens by itself when a projector is connected (Extend); without one this button only opens a test window
+    $('outLbl').textContent = s.outputOpen ? (s.projector ? 'شغالة على البروجكتور' : 'شاشة التجربة مفتوحة') : (s.projector ? 'افتح على البروجكتور' : 'تجربة شاشة العرض');
+    $('openOut').title = s.projector ? 'شاشة العرض بتفتح على البروجكتور لوحدها' : 'مفيش بروجكتور متوصل — الزرار ده بيفتح شاشة تجربة. لما توصّل البروجكتور واعمل Extend (ويندوز + P) شاشة العرض هتفتح عليه لوحدها';
     $('openOut').classList.toggle('primary', !s.outputOpen);
   });
   window.bp.on('key', k => onKey({ key: k.key, code: k.code, target: document.body, preventDefault() {} }));

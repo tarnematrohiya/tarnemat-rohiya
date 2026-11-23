@@ -70,6 +70,7 @@ function createControl() {
   });
   control.loadURL('bp://renderer/index.html');
   control.once('ready-to-show', () => { control.maximize(); control.show(); openOutput(false); });
+  control.webContents.on('did-finish-load', () => setTimeout(sendStatus, 400));   // the button shows the projector state from the start
   control.on('closed', () => { control = null; if (output && !output.isDestroyed()) output.destroy(); app.quit(); });
 }
 
