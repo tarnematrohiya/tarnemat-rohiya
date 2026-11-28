@@ -13,6 +13,10 @@ const st = { tab: 'hymns', mode: 'assist', prayer: false, cur: null, slides: [],
 const bookName = bi => BK[bi][0];
 const arD = n => String(n).replace(/[0-9]/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
 const ref = (b, c, v) => `${bookName(b)} ${arD(c + 1)}: ${arD(v + 1)}`;
+// how to Extend the screen on this computer (Mac / Windows)
+const IS_MAC = !!(window.bp && window.bp.platform === 'darwin');
+const EXTEND = IS_MAC ? 'اعمل Extend من System Settings › Displays (مش Mirror)' : 'اعمل Extend (ويندوز + P)';
+let noOutWarned = false;   // «اتعرضت هنا بس» shows once per run, not on every slide
 const esc = s => String(s).replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
 const plain = s => KE.norm(s);
 const verseName = l => l === 'ق' ? 'القرار' : 'العدد ' + l;
@@ -25,7 +29,8 @@ function hymnSlides(num) {
     num: s.label === 'ق' ? 'ق' : (s.part ? '' : s.label),
     html: s.lines.map(esc).join('<br>'),
     lab: verseName(s.label) + (s.part ? ' (تكملة)' : ''),
-    ref: `ترنيمة ${num} · ${verseName(s.label)}`
+    ref: `ترنيمة ${num} · ${verseName(s.label)}`,
+    fin: i === H[num - 1].slides.length - 1            // last slide: small «Finish» like the original ppts
   })).concat([{ theme: 'b', end: true, html: '', lab: 'شاشة سودا (النهاية)', ref: `ترنيمة ${num} · خلصت — شاشة سودا` }]);
 }
 function chapterSlides(b, c) {
@@ -36,7 +41,7 @@ function paint(el, s) {
   if (!s) { el.innerHTML = ''; return; }
   if (s.end) { el.classList.add('th-b'); el.innerHTML = el.id === 'cueScr' ? '<div class="endlab">آخر الترنيمة — الشاشة هتبقى سودا</div>' : ''; return; }
   el.classList.add('th-' + s.theme);
-  el.innerHTML = (s.num ? `<span class="vn">${s.num}</span>` : '') + `<div class="tx">${s.html}</div>`;
+  el.innerHTML = (s.num ? `<span class="vn">${s.num}</span>` : '') + `<div class="tx">${s.html}</div>` + (s.fin ? '<span class="fin">Finish</span>' : '');
   if (el.classList.contains('screen')) {          // preview screens: shrink long text to fit
     el.style.fontSize = ''; const base = parseFloat(getComputedStyle(el).fontSize); let k = 1;
     while (k > 0.45 && el.scrollHeight > el.clientHeight + 2) { k -= 0.05; el.style.fontSize = (base * k) + 'px'; }
@@ -61,7 +66,7 @@ function renderSlides() {
   el.classList.toggle('list', !!(st.cur && st.cur.kind === 'bible'));   // verses = small lines one under the other
   st.slides.forEach((s, i) => {
     const d = document.createElement('div'); d.className = 'slide th-' + s.theme + (s.end ? ' end' : '');
-    d.innerHTML = `<span class="lab">${s.lab}</span><div class="in">${s.html}</div>`;
+    d.innerHTML = `<span class="lab">${s.lab}</span><div class="in">${s.html}</div>` + (s.fin ? '<span class="fin">Finish</span>' : '');
     d.title = 'ضغطة = جهّزها (ولو الترنيمة معروضة تظهر على طول) · ضغطتين = اعرضها';
     d.onclick = () => pick(i);
     d.ondblclick = () => { setCue(i); play(); };
@@ -108,7 +113,7 @@ function play() {
   st.live = st.cue; st.liveKey = key(); st.liveSlide = s; st.blank = false; $('blankBtn').classList.remove('on');
   paint($('liveScr'), s); $('liveRef').textContent = s.ref;
   sendOut(s); mark(); record(s);
-  if (!outputReady()) toast('اتعرضت هنا بس — وصّل البروجكتور واعمل Extend (ويندوز + P) وشاشة العرض هتفتح عليه لوحدها');
+  if (!outputReady() && !noOutWarned) { noOutWarned = true; toast('اتعرضت هنا بس — وصّل البروجكتور و' + EXTEND + ' وشاشة العرض هتفتح عليه لوحدها'); }
   if (st.cue + 1 < st.slides.length) setCue(st.cue + 1);
 }
 function blank() {
@@ -141,7 +146,7 @@ function openOut() {
   $('outLbl').textContent = 'شاشة العرض مفتوحة';
 }
 function sendOut(s) {
-  if (APP) { window.bp.slide(s ? { theme: s.theme, num: s.num || '', html: s.html, end: !!s.end } : null); return; }
+  if (APP) { window.bp.slide(s ? { theme: s.theme, num: s.num || '', html: s.html, end: !!s.end, fin: !!s.fin } : null); return; }
   if (!st.out || st.out.closed) return;
   const t = st.out.document.getElementById('t'); if (!t) return;
   t.style.opacity = 0;
@@ -154,21 +159,57 @@ if (APP) {
     outOpen = s.outputOpen;
     // the projector screen opens by itself when a projector is connected (Extend); without one this button only opens a test window
     $('outLbl').textContent = s.outputOpen ? (s.projector ? 'شغالة على البروجكتور' : 'شاشة التجربة مفتوحة') : (s.projector ? 'افتح على البروجكتور' : 'تجربة شاشة العرض');
-    $('openOut').title = s.projector ? 'شاشة العرض بتفتح على البروجكتور لوحدها' : 'مفيش بروجكتور متوصل — الزرار ده بيفتح شاشة تجربة. لما توصّل البروجكتور واعمل Extend (ويندوز + P) شاشة العرض هتفتح عليه لوحدها';
+    $('openOut').title = s.projector ? 'شاشة العرض بتفتح على البروجكتور لوحدها' : 'مفيش بروجكتور متوصل — الزرار ده بيفتح شاشة تجربة. لما توصّل البروجكتور و' + EXTEND + ' شاشة العرض هتفتح عليه لوحدها';
     $('openOut').classList.toggle('primary', !s.outputOpen);
   });
   window.bp.on('key', k => onKey({ key: k.key, code: k.code, target: document.body, preventDefault() {} }));
 }
 
 // ---------- font / size ----------
+// ---------- his own fonts (a .ttf/.otf file from this computer): saved on this computer only ----------
+let UF = []; try { UF = JSON.parse(localStorage.getItem('kenesa_ufonts') || '[]'); } catch (e) { UF = []; }
+const ufFam = f => 'U ' + f.id;
+async function ufRegister(f, doc) {
+  try { const ff = new FontFace(ufFam(f), `url(${f.data})`); await ff.load(); (doc || document).fonts.add(ff); return true; } catch (e) { return false; }
+}
+function ufMenus() {
+  $('ufontsG').innerHTML = UF.map(f => `<option value="${ufFam(f)}">${esc(f.name)}</option>`).join('');
+  $('ufontsG').style.display = UF.length ? '' : 'none';
+  $('ufList').innerHTML = UF.map(f => `<span class="uf" style="font-family:'${ufFam(f)}'">${esc(f.name)}<button data-uf="${f.id}" title="شيل الخط ده">×</button></span>`).join('');
+  $('ufList').querySelectorAll('[data-uf]').forEach(b => b.onclick = () => {
+    UF = UF.filter(f => f.id !== b.dataset.uf); try { localStorage.setItem('kenesa_ufonts', JSON.stringify(UF)); } catch (e) {}
+    if ((SET.font || '').startsWith('U ') && !UF.some(f => ufFam(f) === SET.font)) SET.font = 'K Cairo';
+    ufMenus(); applySet(); toast('الخط اتشال');
+  });
+}
+function ufPick() {
+  let inp = $('ufFile');
+  if (!inp) { inp = document.createElement('input'); inp.type = 'file'; inp.id = 'ufFile'; inp.accept = '.ttf,.otf,.woff,.woff2'; inp.style.display = 'none'; document.body.appendChild(inp); inp.onchange = () => { if (inp.files[0]) ufAdd(inp.files[0]); inp.value = ''; }; }
+  inp.click();
+}
+async function ufAdd(file) {
+  if (!/\.(ttf|otf|woff2?)$/i.test(file.name)) { toast('اختار ملف خط (.ttf أو .otf)'); return; }
+  if (file.size > 3 * 1024 * 1024) { toast('ملف الخط كبير أوي (أكتر من 3 ميجا) — اختار وزن واحد بس من الخط'); return; }
+  const data = await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.onerror = () => r(null); fr.readAsDataURL(file); });
+  const f = { id: Date.now().toString(36), name: file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').trim().slice(0, 40), data };
+  if (!data || !(await ufRegister(f))) { toast('الملف ده مش خط ينفع يتفتح'); return; }
+  UF.push(f);
+  try { localStorage.setItem('kenesa_ufonts', JSON.stringify(UF)); } catch (e) { UF.pop(); toast('مفيش مكان يتحفظ فيه الخط ده — شيل خط تاني الأول'); return; }
+  SET.font = ufFam(f); ufMenus(); applySet(); toast('الخط «' + f.name + '» اتضاف واتختار');
+}
 function applySet() {
-  if (APP) window.bp.style({ font: SET.font, scale: SET.scale, fill: SET.fill !== false });
+  const used = UF.filter(f => ufFam(f) === SET.font).map(f => ({ fam: ufFam(f), data: f.data }));
+  if (APP) window.bp.style({ font: SET.font, scale: SET.scale, fill: SET.fill !== false, ufonts: used });
+  else if (st.out && !st.out.closed) used.forEach(f => ufRegister({ id: f.fam.slice(2), data: f.data }, st.out.document));
   if ($('fillBtn')) { $('fillBtn').textContent = 'ملء الشاشة: ' + (SET.fill !== false ? 'شغال' : 'مقفول'); $('fillBtn').classList.toggle('on', SET.fill !== false); }
   for (const d of [document, st.out && !st.out.closed ? st.out.document : null]) if (d) { d.documentElement.style.setProperty('--f', `"${SET.font}"`); d.documentElement.style.setProperty('--s', SET.scale); }
   $('fontSel').value = SET.font; $('szVal').textContent = Math.round(SET.scale * 100) + '%';
   try { localStorage.setItem('kenesa_set', JSON.stringify(SET)); } catch (e) {}
 }
 $('fontSel').onchange = e => { SET.font = e.target.value; applySet(); };
+$('ufAdd').onclick = ufPick; ufMenus();
+if ((SET.font || '').startsWith('U ') && !UF.some(f => ufFam(f) === SET.font)) SET.font = 'K Cairo';
+UF.forEach(f => ufRegister(f).then(() => { if (SET.font === ufFam(f)) applySet(); }));
 $('fillBtn').onclick = () => { SET.fill = SET.fill === false; applySet(); toast(SET.fill ? 'الكلام هيكبر لحد ما يملا الشاشة' : 'الكلام بالحجم العادي'); };
 $('szUp').onclick = () => { SET.scale = Math.min(1.6, +(SET.scale + 0.1).toFixed(1)); applySet(); };
 $('szDn').onclick = () => { SET.scale = Math.max(0.6, +(SET.scale - 0.1).toFixed(1)); applySet(); };
@@ -261,7 +302,7 @@ function search() {
   }
 }
 function setTab(t) {
-  st.tab = t; document.querySelectorAll('[data-tab]').forEach(x => x.classList.toggle('on', x.dataset.tab === t));
+  st.tab = t; st.kbAt = null; document.querySelectorAll('[data-tab]').forEach(x => x.classList.toggle('on', x.dataset.tab === t));
   $('q').value = ''; $('q').placeholder = t === 'hymns' ? 'رقم الترنيمة أو أي كلام منها…' : 'اكتب الشاهد (يوحنا 3 16) أو أي كلام من الآية…';
   document.querySelector('.search').style.display = (t === 'today' || t === 'history') ? 'none' : '';
   search(); if (t === 'hymns' || t === 'bible') $('q').focus();
@@ -335,10 +376,11 @@ function showHistory(openId) {
   const list = MEET.meetings.filter(m => m.items.length);
   if (openId) {
     const m = MEET.meetings.find(x => x.id === openId); if (!m) return showHistory();
+    st.histRoot = false;
     crumb([{ t: 'كل الاجتماعات', fn: () => { $('results').innerHTML = ''; showHistory(); } }, { t: m.title }]);
     listItems(m); return;
   }
-  crumb([]);
+  crumb([]); st.histRoot = true;
   if (!list.length) { empty('لسه مفيش اجتماعات متسجلة'); return; }
   list.forEach(m => item('', m.title, (m.items.length === 1 ? 'حاجة واحدة' : m.items.length + ' حاجات') + ' · بدأ ' + timeOf(m.started), () => { $('results').innerHTML = ''; showHistory(m.id); }));
 }
@@ -480,6 +522,23 @@ function onKey(e) {
   if (numKey(e)) { if (e.preventDefault) e.preventDefault(); return; }
   // Hymns tab: Arabic / English letters go into the search box
   if (st.tab === 'hymns' && e.key.length === 1 && /[؀-ۿA-Za-z]/.test(e.key)) { $('q').value = ''; $('q').focus(); return; }
+  // اجتماع اليوم / السجل: ↓ ↑ walk the list, Enter opens (and shows) it; ← → still flip the slides
+  if ((st.tab === 'today' || st.tab === 'history') && (e.key === 'ArrowDown' || e.key === 'ArrowUp' || (e.key === 'Enter' && $('results').querySelector('.item.kb')))) {
+    const its = [...$('results').querySelectorAll('.item')];
+    if (!its.length) return;
+    e.preventDefault();
+    if (e.key === 'Enter') {
+      const on = $('results').querySelector('.item.kb'), i = its.indexOf(on); st.kbAt = i;
+      const meeting = st.tab === 'history' && st.histRoot;   // the list of meetings: Enter opens the meeting
+      on.click();
+      if (meeting) st.kbAt = null; else if (st.cur) play();   // a hymn / verse: show it straight away
+      return;
+    }
+    let i = its.findIndex(x => x.classList.contains('kb')); if (i < 0) i = st.kbAt != null && st.kbAt < its.length ? st.kbAt : -1;
+    i = i < 0 ? (e.key === 'ArrowDown' ? 0 : its.length - 1) : Math.max(0, Math.min(its.length - 1, i + (e.key === 'ArrowDown' ? 1 : -1)));
+    its.forEach(x => x.classList.remove('kb')); its[i].classList.add('kb'); its[i].scrollIntoView({ block: 'nearest' }); st.kbAt = i;
+    return;
+  }
   // verses: ↓ ↑ walk the list, Enter shows the verse
   if (st.cur && st.cur.kind === 'bible' && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) { e.preventDefault(); setCue(st.cue + (e.key === 'ArrowDown' ? 1 : -1)); return; }
   if (e.key === 'Enter' && st.cur) { e.preventDefault(); play(); return; }
